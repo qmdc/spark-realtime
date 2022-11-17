@@ -1,0 +1,9 @@
+**/mvnw
+**/mvnw.cmd
+**/.mvn
+**/target
+.idea
+**/README.md
+**/*.iml
+*.iml
+.git
