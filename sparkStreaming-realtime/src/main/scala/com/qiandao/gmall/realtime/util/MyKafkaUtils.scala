@@ -2,12 +2,12 @@ package com.qiandao.gmall.realtime.util
 
 import org.apache.kafka.clients.consumer.{ConsumerConfig, ConsumerRecord}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
+import org.apache.kafka.common.TopicPartition
 import org.apache.spark.streaming.StreamingContext
 import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.kafka010.{ConsumerStrategies, KafkaUtils, LocationStrategies}
 
 import scala.collection.mutable
-
 import java.util
 
 /**
@@ -45,6 +45,17 @@ object MyKafkaUtils {
       LocationStrategies.PreferConsistent,
       ConsumerStrategies.Subscribe[String, String](Array(topic), consumerConfigs)
     )
+    kafkaDStream
+  }
+
+  /**
+   * 基于SparkStreaming消费 ,获取到KafkaDStream , 使用指定的offset
+   */
+  def getKafkaDStream(ssc : StreamingContext , topic: String  , groupId:String ,  offsets: Map[TopicPartition, Long]) ={
+    consumerConfigs.put(ConsumerConfig.GROUP_ID_CONFIG , groupId)
+    val kafkaDStream: InputDStream[ConsumerRecord[String, String]] = KafkaUtils.createDirectStream(ssc,
+      LocationStrategies.PreferConsistent,
+      ConsumerStrategies.Subscribe[String, String](Array(topic), consumerConfigs , offsets))
     kafkaDStream
   }
 
@@ -95,6 +106,14 @@ object MyKafkaUtils {
    */
   def close(): Unit = {
     if (producer != null) producer.close()
+  }
+
+  /**
+   * 刷写 ，将缓冲区的数据刷写到磁盘
+   *
+   */
+  def flush(): Unit ={
+    producer.flush()
   }
 
 }
