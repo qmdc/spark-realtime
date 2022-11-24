@@ -142,6 +142,7 @@ object OdsBaseDbApp {
                   val data: String = jsonObj.getString("data")
                   // DWD_ORDER_INFO_I  DWD_ORDER_INFO_U  DWD_ORDER_INFO_D
                   val dwdTopicName: String = s"DWD_${tableName.toUpperCase}_$opValue"
+                  println(s"主题名称：$dwdTopicName")
                   MyKafkaUtils.send(dwdTopicName, data)
 
                   //模拟数据延迟
@@ -150,7 +151,7 @@ object OdsBaseDbApp {
                   }
                 }
 
-                if (dimTablesBC.value.contains(tableName)) {
+                if (dimTablesBC.value.contains(tableName.toUpperCase())) {
                   //维度数据
                   // 类型 : string  hash
                   //        hash ： 整个表存成一个hash。 要考虑目前数据量大小和将来数据量增长问题 及 高频访问问题.
