@@ -3,7 +3,7 @@
 **/.mvn
 **/target
 .idea
-**/README.md
 **/*.iml
 *.iml
 .git
+.DS_Store
